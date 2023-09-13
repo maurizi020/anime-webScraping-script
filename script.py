@@ -6,8 +6,10 @@ from bs4 import BeautifulSoup
  
 load_dotenv()
 
-if __name__ == '__main__':
+#Lista de Animes ya notificados
+anime_list = []
 
+def obtener_animes():
     # Ejecutar GET-Request
     response = requests.get(os.environ.get("ANIME_URL"))
 
@@ -20,5 +22,17 @@ if __name__ == '__main__':
 
     for anime in anime_titles:
         print(anime.h2.text + " cap " + anime.p.text)
-    
-    # print(json.dumps(animes, indent=4))
+        animes.append(anime.h2.text + " cap " + anime.p.text)
+
+    return animes
+
+
+def mandar_notificación_telegram(animes):
+    url = f"https://api.telegram.org/bot{os.environ.get('TELEGRAM_TOKEN')}/getUpdates"
+    message = "hello from your telegram bot"
+    url = f"https://api.telegram.org/bot{os.environ.get('TELEGRAM_TOKEN')}/sendMessage?chat_id={os.environ.get('CHAT_ID')}&text={message}"
+    print(json.dumps(requests.get(url).json(), indent=4))
+
+
+if __name__ == '__main__':
+    animes = obtener_animes()
